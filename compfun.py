@@ -5,7 +5,7 @@ import scipy.optimize as opt
 import data
 
 # Pretty Plotting
-plt.style.use("style.mplstyle")
+plt.style.use("%s/style.mplstyle" % __file__)
 
 ###############################;
 # Numerical Complex Functions #
