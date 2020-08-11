@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import scipy.optimize as opt
 
-import data
+from . import data
 
 # Pretty Plotting
 import os
