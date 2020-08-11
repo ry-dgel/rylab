@@ -2,7 +2,8 @@ import numpy as np
 import spinmob as sp
 import matplotlib.pyplot as plt
 
-plt.style.use("%s/style.mplstyle" % __file__)
+import os
+plt.style.use(os.path.join(os.path.dirname(__file__),"style.mplstyle"))
 
 ########
 # PSDs #
