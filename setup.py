@@ -5,5 +5,6 @@ setup(name = 'Rylab',
       author_email = "rydgel.code@gmail.com",
       url = "https://github.com/rydgel/rylab",
       packages = ['rylab'],
-      package_dir = {'rylab' : '.'}
+      package_dir = {'rylab' : '.'},
+      package_data = {'rylab' : ['style.mplstyle']}
      )
