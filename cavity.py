@@ -2,6 +2,7 @@ import functools
 import numpy as np
 from numba import jit
 from scipy import constants
+from scipy.signal import find_peaks
 from multiprocessing import Pool
 import matplotlib.pyplot as plt
 
