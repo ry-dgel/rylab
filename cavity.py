@@ -4,6 +4,12 @@ from numba import jit
 from scipy import constants
 from multiprocessing import Pool
 
+from . import data
+
+# Pretty Plotting
+import os
+plt.style.use(os.path.join(os.path.dirname(__file__),"style.mplstyle"))
+
 pi = constants.pi
 c  = constants.c
 
@@ -76,3 +82,37 @@ def min_dists(pairs, es,ts):
     func = functools.partial(min_dist, es=es, ts=ts)
     with Pool(10) as p:
         return np.array(p.map(func, pairs))
+
+#####################
+# WhiteLight Length #
+#####################
+def white_length(filename, plot=False, disp=False, 
+                 wlmin=600, wlmax=650, dist=50, threshold=None):
+    wl_data = data.read_csv(filename)
+    wavelength = wl_data[:,0]
+    counts = np.max(wl_data[:,1:17],axis=1)
+    if threshold is None:
+        threshold = np.mean(counts)+np.std(counts)
+
+    bounds = np.logical_and(wavelength >= wlmin, wavelength <= wlmax)
+    wavelength = wavelength[bounds]
+    counts = counts[bounds]
+
+    peaks = find_peaks(counts, threshold,distance=dist)
+    peak_wl = wavelength[peaks[0]]
+    peak_freq = c/(peak_wl * 1E-9)
+    fsrs = np.diff(peak_freq[::-1])
+    lengths = c/(2*fsrs)
+    #TODO: USE THAT NCR PACKAGE FOR UNCERTAINTIES
+    length = np.mean(lengths) * 1E6 # um
+    fsr = np.mean(fsrs) / 1E6 # MHz
+    if plot:
+        plt.figure()
+        plt.plot(wavelength,counts)
+        plt.vlines(peak_wl,np.min(counts),np.max(counts)+10)
+        plt.show()
+    if disp:
+        print(filename)
+        print("\tCavity length is: %s um" % length)
+        print("\tFSR is: %s MHz" % fsr)
+    return length, fsr

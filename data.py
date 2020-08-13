@@ -30,10 +30,12 @@ def get_header(file):
         return i
 
 
-# Read data from csv file.
-def read_csv(file, names=True):
-    delim = get_delim(file)
-    head = get_header(file)
+# Read data from csv file. 
+def read_csv(file, names=True, delim=None, head=None):
+    if delim is None:
+        delim = get_delim(file)
+    if head is None:
+        head = get_header(file)
     if names:
         return np.genfromtxt(file, names=True, delimiter=delim,skip_header=head-1)
     else:
