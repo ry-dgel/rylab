@@ -9,11 +9,13 @@ def get_delim(file):
     with open(file, "r") as f:
         # Reads file line by line, so that only one line needs to be read
         for _, line in enumerate(f):
-            # ignore comments if present
-            if '#' not in line:
-                for delim in [",", ";", ":", "\t"]:
-                    if delim in line:
-                        return delim
+            # ignore comments and header if present
+            if re.search("[a-df-z]", line) is not None or line.strip() == "":
+                continue
+            
+            for delim in [",", ";", ":", "\t"]:
+                if delim in line:
+                    return delim
 
     print("No delimiters found")
     return ""
