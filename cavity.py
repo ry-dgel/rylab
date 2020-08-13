@@ -89,7 +89,7 @@ def min_dists(pairs, es,ts):
 #####################
 def white_length(filename, plot=False, disp=False, 
                  wlmin=600, wlmax=650, dist=50, threshold=None):
-    wl_data = data.read_csv(filename)
+    wl_data = data.read_csv(filename, names=False)
     wavelength = wl_data[:,0]
     counts = np.max(wl_data[:,1:17],axis=1)
     if threshold is None:
