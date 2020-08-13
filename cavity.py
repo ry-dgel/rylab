@@ -3,6 +3,7 @@ import numpy as np
 from numba import jit
 from scipy import constants
 from multiprocessing import Pool
+import matplotlib.pyplot as plt
 
 from . import data
 
