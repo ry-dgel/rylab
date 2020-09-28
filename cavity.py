@@ -108,11 +108,15 @@ def white_length(filename, plot=False, disp=False,
     #TODO: USE THAT NCR PACKAGE FOR UNCERTAINTIES
     length = np.mean(lengths) * 1E6 # um
     fsr = np.mean(fsrs) / 1E6 # MHz
-    if plot:
+    if plot == True:
         plt.figure()
         plt.plot(wavelength,counts)
         plt.vlines(peak_wl,np.min(counts),np.max(counts)+10)
         plt.show()
+    elif plot != False:
+        plot.plot(wavelength, counts)
+        plot.vlines(peak_wl,np.min(counts),np.max(counts)+10)
+        
     if disp:
         print(filename)
         print("\tCavity length is: %s um" % length)
