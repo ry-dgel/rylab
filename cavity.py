@@ -89,7 +89,7 @@ def min_dists(pairs, es,ts):
 # WhiteLight Length #
 #####################
 def white_length(filename, plot=False, disp=False, 
-                 wlmin=600, wlmax=650, dist=50, threshold=None, ratio=0.05):
+                 wlmin=600, wlmax=650, dist=50, threshold=None, ratio=0.05, **kwargs):
     wl_data = data.read_csv(filename, names=False)
     wavelength = wl_data[:,0]
     counts = np.max(wl_data[:,1:17],axis=1)
@@ -100,7 +100,7 @@ def white_length(filename, plot=False, disp=False,
     wavelength = wavelength[bounds]
     counts = counts[bounds]
 
-    peaks = find_peaks(counts, threshold,distance=dist)
+    peaks = find_peaks(counts, threshold=threshold, distance=dist, **kwargs)
     peak_wl = wavelength[peaks[0]]
     peak_freq = c/(peak_wl * 1E-9)
     fsrs = np.diff(peak_freq[::-1])
