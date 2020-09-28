@@ -112,11 +112,10 @@ def white_length(filename, plot=False, disp=False,
         plt.figure()
         plt.plot(wavelength,counts)
         plt.vlines(peak_wl,np.min(counts),np.max(counts)+10)
-        plt.show()
+        plt.show(block=False)
     elif plot != False:
         plot.plot(wavelength, counts)
         plot.vlines(peak_wl,np.min(counts),np.max(counts)+10)
-        
     if disp:
         print(filename)
         print("\tCavity length is: %s um" % length)
