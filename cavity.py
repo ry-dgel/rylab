@@ -161,7 +161,7 @@ def fit_triple(filename,ax,func,mod_freq):
 # WhiteLight Length #
 #####################
 def white_length(filename, plot=False, disp=False, col=10,
-                 wlmin=600.0, wlmax=650.0, dist=50, threshold=None, ratio=0.05, **kwargs):
+                 wlmin=600.0, wlmax=650.0, dist=50, height=None, ratio=0.05, **kwargs):
     """
     Fit the whitelight data present in the given file.
     This assumes that the data was bined and only contained in one row of the
@@ -185,7 +185,7 @@ def white_length(filename, plot=False, disp=False, col=10,
         The maxmimum wavelength to include in the peak detect region, by default 650.0
     dist : int, optional
         The minimum distance between x-points to consider new peaks, by default 50
-    threshold : int, optional
+    height : int, optional
         The minimum value above which a peak must reach to be considered, if none
         will be ratio times the max count number, plus the mean count number.
     ratio : float, optional
@@ -200,14 +200,14 @@ def white_length(filename, plot=False, disp=False, col=10,
     wl_data = _d.read_csv(filename, names=['wl','counts'],usecols=[0,10],head=0,skiprows=30,delim=',')
     wavelength = wl_data['wl'].to_numpy()
     counts = wl_data['counts'].to_numpy()
-    if threshold is None:
-        threshold = np.mean(counts) + (np.max(counts) * ratio)
+    if height is None:
+        height = np.mean(counts) + (np.max(counts) * ratio)
 
     bounds = np.logical_and(wavelength >= wlmin, wavelength <= wlmax)
     wavelength = wavelength[bounds]
     counts = counts[bounds]
 
-    peaks = find_peaks(counts, threshold=threshold, distance=dist, **kwargs)
+    peaks = find_peaks(counts, height=height, distance=dist, **kwargs)
     peak_wl = wavelength[peaks[0]]
     peak_freq = c/(peak_wl * 1E-9)
     fsrs = np.diff(peak_freq[::-1])

@@ -73,7 +73,7 @@ def read(filename, **kwargs):
 
     return read_csv(filename, **kwargs)
 
-def read_csv(file, df=True, head=None, delim=None, **kwargs):
+def read_csv(file, df=False, head=None, delim=None, **kwargs):
     """
     Read a csv file using panda's read_csv(). Can either return a dataframe,
     or a numpy array using panda's to_numpy() function.
