@@ -119,7 +119,7 @@ def triple_lor(x, splitting, amp, center, linewidth, ps, offset):
 ####################
 # Sideband Fitting #
 ####################
-def fit_triple(filename,ax,func,mod_freq):
+def fit_triple(filename,func,mod_freq,ax=None):
     print("Fitting sideband data in %s" % filename)
     data = _d.read(filename)
     xs = data[0]
@@ -141,20 +141,25 @@ def fit_triple(filename,ax,func,mod_freq):
     sigma = min(np.diff(data[:,1]))
 
     # Fitting
-    p_opt, p_cov = curve_fit(func,xs,ys,
-                             p0=guesses,
-                             sigma=sigma*np.ones(ys.size),
-                             maxfev=2000)
+    model = lm.Model(func)
+    params = model.make_params(splitting=split, 
+                               amp=amp, 
+                               center=center, 
+                               linewidth=0.0001, 
+                               ps=0.1, 
+                               offset=offset
+                               slope=0.0001)
     
     # Computing results
     errors = np.sqrt(np.diag(p_cov))
-    chisqr = np.sum(((ys - triple_lor(xs,*p_opt))/sigma)**2)/(len(ys)-len(guesses))
-    ax.plot(xs, triple_lor(xs,*p_opt))
+    chisqr = np.sum(((ys - func(xs,*p_opt))/sigma)**2)/(len(ys)-len(guesses))
+    if ax is not None:
+        ax.plot(xs, triple_lor(xs,*p_opt))
     if chisqr > 2.0:
         print("Chi-Square from triplet fit is greater than 2!")
-    lw = p_opt[3] / p_opt[0] * mod_freq # MHz
+    lw = result.best_values['linewidth'] / result.best_values['splitting'] * mod_freq
     print("Linwidth = %.2f MHz (Chisq = %.2f)" % (np.abs(lw),chisqr))
-    return lw
+    return np.abs(lw)
 
 #####################
 # WhiteLight Length #
