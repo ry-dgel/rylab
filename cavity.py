@@ -154,7 +154,7 @@ def fit_triple(filename,func,mod_freq,ax=None):
     chisqr = result.redchi
     best_vals = result.best_values
     if ax is not None:
-        ax.plot(xs, triple_lor(xs,*(best_vals.items())))
+        ax.plot(xs, triple_lor(xs,*(best_vals.values())))
     if chisqr > 2.0:
         print("Chi-Square from triplet fit is greater than 2!")
     lw = result.best_vals['linewidth'] / result.best_vals['splitting'] * mod_freq
