@@ -137,8 +137,7 @@ def fit_triple(filename,func,mod_freq,ax=None):
     center = xs[peak]
     split = (xs[split_right]-xs[split_left])
     amp = max(ys) - offset
-    guesses = [split*0.5,amp/1.5,center,0.0001,0.1,offset]
-    sigma = min(np.diff(data[:,1]))
+    sigma = min(np.diff(ys))
 
     # Fitting
     model = lm.Model(func)
@@ -147,17 +146,18 @@ def fit_triple(filename,func,mod_freq,ax=None):
                                center=center, 
                                linewidth=0.0001, 
                                ps=0.1, 
-                               offset=offset
+                               offset=offset,
                                slope=0.0001)
     
     # Computing results
-    errors = np.sqrt(np.diag(p_cov))
-    chisqr = np.sum(((ys - func(xs,*p_opt))/sigma)**2)/(len(ys)-len(guesses))
+    result = model.fit(ys, params, x=xs, weights = 1/sigma * np.ones(ys.size))
+    chisqr = result.redchi
+    best_vals = result.best_values
     if ax is not None:
-        ax.plot(xs, triple_lor(xs,*p_opt))
+        ax.plot(xs, triple_lor(xs,*(best_vals.items())))
     if chisqr > 2.0:
         print("Chi-Square from triplet fit is greater than 2!")
-    lw = result.best_values['linewidth'] / result.best_values['splitting'] * mod_freq
+    lw = result.best_vals['linewidth'] / result.best_vals['splitting'] * mod_freq
     print("Linwidth = %.2f MHz (Chisq = %.2f)" % (np.abs(lw),chisqr))
     return np.abs(lw)
 
