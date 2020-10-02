@@ -45,7 +45,35 @@ def read_csv_old(file, names=True, delim=None, head=None):
     else:
         return np.genfromtxt(file, delimiter=delim, skip_header=head)
 
-def read_csv(file, df=False, head=None, delim=None, **kwargs):
+def read(filename, **kwargs):
+    """
+    Checks if a file is a spinmob binary file. If so reads it as such.
+    Otherwise, read it as a CSV. In the future this could be extended
+    to identify other file types.
+
+    Parameters
+    ----------
+    filename : string
+        Path to the file to read
+
+    kwargs :
+        key word arguments to pass to whatever file reading function gets called.
+
+    Returns
+    -------
+    object
+        Some sort of data container, depending on the filetype and kwargs
+    """
+    try:
+        with open(filename, 'rb') as f:
+            if f.read(14).decode('utf-8') == 'SPINMOB_BINARY':
+                return read_sp_bin(filename, **kwargs)
+    except UnicodeDecodeError:
+        pass
+
+    return read_csv(filename, **kwargs)
+
+def read_csv(file, df=True, head=None, delim=None, **kwargs):
     """
     Read a csv file using panda's read_csv(). Can either return a dataframe,
     or a numpy array using panda's to_numpy() function.
