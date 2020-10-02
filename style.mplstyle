@@ -19,6 +19,7 @@ axes.labelsize: medium
 axes.titlesize: large
 axes.grid: True
 axes.linewidth: 1.0
+axes.below: True
 
 grid.color: F0F0F0
 grid.linestyle: --
