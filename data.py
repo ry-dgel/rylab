@@ -1,4 +1,6 @@
 import numpy as np
+import pandas as pd
+import spinmob as sp
 import re
 
 ################
@@ -33,7 +35,7 @@ def get_header(file):
 
 
 # Read data from csv file. 
-def read_csv(file, names=True, delim=None, head=None):
+def read_csv_old(file, names=True, delim=None, head=None):
     if delim is None:
         delim = get_delim(file)
     if head is None:
@@ -42,6 +44,42 @@ def read_csv(file, names=True, delim=None, head=None):
         return np.genfromtxt(file, names=True, delimiter=delim,skip_header=head-1)
     else:
         return np.genfromtxt(file, delimiter=delim, skip_header=head)
+
+def read_csv(file, df=False, head=None, delim=None, **kwargs):
+    """
+    Read a csv file using panda's read_csv(). Can either return a dataframe,
+    or a numpy array using panda's to_numpy() function.
+
+    Parameters
+    ----------
+    file : string
+        the path to the file. Pandas can also accept urls if that's helpful.
+    df : bool, optional
+        if true, returns the pandas dataframe, else , by default False
+    head : int, optional
+        the line that contains the column names, by default will read the file for a line of data,
+        and backtrack from there.
+    delim : [type], optional
+        [description], by default None
+
+    Returns
+    -------
+    [type]
+        [description]
+    """
+    if head is None:
+        head = get_header(file)-1
+        if head < 0:
+            head = None
+    data = pd.read_csv(file, header=head+1, sep=delim, **kwargs)
+
+    if df:
+        return data
+    else:
+        return data.to_numpy()
+
+def read_sp_bin(file):
+    return sp.data.load(file)
 
 # Get data from csv file exported from lock in.
 def unpack(filename, fields = []):

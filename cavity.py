@@ -4,9 +4,13 @@ from numba import jit
 from scipy import constants
 from scipy.signal import find_peaks
 from multiprocessing import Pool
-import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt 
 
-from . import data
+from scipy.optimize import curve_fit
+#TODO: Implement fitting with lmfit
+import lmfit as lm
+
+from . import data as _d
 
 # Pretty Plotting
 import os
@@ -16,7 +20,7 @@ pi = constants.pi
 c  = constants.c
 
 ##################
-# Error Function #
+# Analytic Error #
 ##################
 @jit(nopython=True)
 def errf(dL, r, fm, m, lamb, a, phi, theta):
@@ -48,7 +52,7 @@ def errf(dL, r, fm, m, lamb, a, phi, theta):
     return err
 
 #########################
-# Transmission Function #
+# Analytic Transmission #
 #########################
 @jit(nopython=True)
 def transf(dL, r, fm, m, lamb, pc):
@@ -85,12 +89,80 @@ def min_dists(pairs, es,ts):
     with Pool(10) as p:
         return np.array(p.map(func, pairs))
 
+#########################
+# Simple Fitting Funcs. #
+#########################
+def fano(x, amp, slope, width, center):
+    hw = width/2
+    deltax = x-center
+    return (amp + slope * deltax) * hw**2 /((hw)**2 + deltax**2)
+
+def triple_fan(x, splitting, amp, slope, center, linewidth, ps, offset):
+    shift = splitting/2
+    carrier = fano(x, amp, slope, linewidth, center)
+    sidebands = ps * (fano(x, amp, slope, linewidth, center+shift) 
+                      + fano(x, amp, slope, linewidth, center-shift))
+    return offset + carrier + sidebands
+
+def lorenz(x, amp, width, center):
+    hw = width/2
+    deltax = x-center
+    return (amp) * hw**2 /((hw)**2 + deltax**2)
+
+def triple_lor(x, splitting, amp, center, linewidth, ps, offset):
+    shift = splitting/2
+    carrier = lorenz(x, amp, linewidth, center)
+    sidebands = ps * (lorenz(x, amp, linewidth, center+shift) 
+                      + lorenz(x, amp, linewidth, center-shift))
+    return offset + carrier + sidebands
+
+####################
+# Sideband Fitting #
+####################
+def fit_triple(filename,ax,func,mod_freq):
+    print("Fitting sideband data in %s" % filename)
+    data = _d.read_csv(filename, delimiter='\t',skip_header=27)
+    xs = data[:,0]
+    ys = data[:,1]
+
+    # Getting main peak
+    peak=find_peaks(ys, height=(np.mean(ys)+0.1*np.std(ys)),distance=50000)[0][0]
+
+    # Rough guessing side peaks
+    split_left = np.argmin(np.abs(ys[:peak] - np.max(ys[:peak])/3))
+    split_right = np.argmin(np.abs(ys[peak:] - np.max(ys[peak:])/3))
+
+    # Guesses
+    offset = np.mean(ys)/2
+    center = xs[peak]
+    split = (xs[split_right]-xs[split_left])
+    amp = max(ys) - offset
+    guesses = [split*0.5,amp/1.5,center,0.0001,0.1,offset]
+    sigma = min(np.diff(data[:,1]))
+
+    # Fitting
+    p_opt, p_cov = curve_fit(func,
+                             data[:,0],data[:,1],
+                             p0=guesses,
+                             sigma=sigma*np.ones(data[:,1].size),
+                             maxfev=2000)
+    
+    # Computing results
+    errors = np.sqrt(np.diag(p_cov))
+    chisqr = np.sum(((ys - triple_lor(xs,*p_opt))/sigma)**2)/(len(ys)-len(guesses))
+    ax.plot(xs, triple_lor(xs,*p_opt))
+    if chisqr > 2.0:
+        print("Chi-Square from triplet fit is greater than 2!")
+    lw = p_opt[3] / p_opt[0] * mod_freq # MHz
+    print("Linwidth = %.2f MHz (Chisq = %.2f)" % (np.abs(lw),chisqr))
+    return lw
+
 #####################
 # WhiteLight Length #
 #####################
 def white_length(filename, plot=False, disp=False, 
                  wlmin=600, wlmax=650, dist=50, threshold=None, ratio=0.05, **kwargs):
-    wl_data = data.read_csv(filename, names=False)
+    wl_data = _d.read_csv(filename, names=False)
     wavelength = wl_data[:,0]
     counts = np.max(wl_data[:,1:17],axis=1)
     if threshold is None:
