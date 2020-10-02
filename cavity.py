@@ -160,11 +160,46 @@ def fit_triple(filename,ax,func,mod_freq):
 #####################
 # WhiteLight Length #
 #####################
-def white_length(filename, plot=False, disp=False, 
-                 wlmin=600, wlmax=650, dist=50, threshold=None, ratio=0.05, **kwargs):
-    wl_data = _d.read_csv(filename)
-    wavelength = wl_data[:,0]
-    counts = np.max(wl_data[:,1:17],axis=1)
+def white_length(filename, plot=False, disp=False, col=10,
+                 wlmin=600.0, wlmax=650.0, dist=50, threshold=None, ratio=0.05, **kwargs):
+    """
+    Fit the whitelight data present in the given file.
+    This assumes that the data was bined and only contained in one row of the
+    saved data.
+
+
+    Parameters
+    ----------
+    filename : string
+        the file containing the counts data.
+    plot : bool/matplotlib.axes, optional
+        If True, will generate a plot of the data, by default False.
+        Can also pass a plot axes object to plot directly on that plot.
+    disp : bool, optional
+        If True, will print the results, by default False
+    col : Int
+        Which column of the data to use optional, by default 10
+    wlmin : float, optional
+        The minimum wavelength to include in the peak detect region, by default 600.0
+    wlmax : float, optional
+        The maxmimum wavelength to include in the peak detect region, by default 650.0
+    dist : int, optional
+        The minimum distance between x-points to consider new peaks, by default 50
+    threshold : int, optional
+        The minimum value above which a peak must reach to be considered, if none
+        will be ratio times the max count number, plus the mean count number.
+    ratio : float, optional
+        How small of a bump relative to the max to consider a peak, by default 0.05
+    **kwargs will be passed to find_peaks
+
+    Returns
+    -------
+    float, float
+        The computer length in um, and FSR in MHz
+    """
+    wl_data = _d.read_csv(filename, names=['wl','counts'],usecols=[0,10],head=0,skiprows=30,delim=',')
+    wavelength = wl_data['wl'].to_numpy()
+    counts = wl_data['counts'].to_numpy()
     if threshold is None:
         threshold = np.mean(counts) + (np.max(counts) * ratio)
 
