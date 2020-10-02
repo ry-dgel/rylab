@@ -121,9 +121,9 @@ def triple_lor(x, splitting, amp, center, linewidth, ps, offset):
 ####################
 def fit_triple(filename,ax,func,mod_freq):
     print("Fitting sideband data in %s" % filename)
-    data = _d.read_csv(filename, delimiter='\t',skip_header=27)
-    xs = data[:,0]
-    ys = data[:,1]
+    data = _d.read(filename)
+    xs = data[0]
+    ys = data[1]
 
     # Getting main peak
     peak=find_peaks(ys, height=(np.mean(ys)+0.1*np.std(ys)),distance=50000)[0][0]
@@ -141,10 +141,9 @@ def fit_triple(filename,ax,func,mod_freq):
     sigma = min(np.diff(data[:,1]))
 
     # Fitting
-    p_opt, p_cov = curve_fit(func,
-                             data[:,0],data[:,1],
+    p_opt, p_cov = curve_fit(func,xs,ys,
                              p0=guesses,
-                             sigma=sigma*np.ones(data[:,1].size),
+                             sigma=sigma*np.ones(ys.size),
                              maxfev=2000)
     
     # Computing results
