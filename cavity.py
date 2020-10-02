@@ -162,7 +162,7 @@ def fit_triple(filename,ax,func,mod_freq):
 #####################
 def white_length(filename, plot=False, disp=False, 
                  wlmin=600, wlmax=650, dist=50, threshold=None, ratio=0.05, **kwargs):
-    wl_data = _d.read_csv(filename, names=False)
+    wl_data = _d.read_csv(filename)
     wavelength = wl_data[:,0]
     counts = np.max(wl_data[:,1:17],axis=1)
     if threshold is None:
