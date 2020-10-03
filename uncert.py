@@ -1,7 +1,7 @@
 import numpy as np
 import metrolopy as mp
 
-def from_list(xs, weights=None, unit=None):
+def from_floats(xs, weights=None, unit=None):
     """
     Given a list of x values, returns a gummy with mean center
     and std error uncertainty. The calculation of the uncertainty is 
@@ -36,3 +36,23 @@ def from_list(xs, weights=None, unit=None):
     stder = np.sqrt(var/len(xs))
 
     return mp.gummy(mean, stder, unit=unit)
+
+def from_gummys(gummys):
+    """
+    To compute a properly weighted average from a list of gummy's
+    simply take the center values and compute weights from uncertainties.
+    Then use the above function.
+
+    Parameters
+    ----------
+    gummys : [gummy]
+        List of gummy values to compute a weighted mean with error from.
+
+    Returns
+    -------
+    gummy
+        weighted error with uncertainty given by standard error on mean.
+    """
+    xs = [gummy.x for gummy in gummys]
+    weights = [1/gummy.u for gummy in gummys]
+    return from_floats(xs, weights, unit=gummys[0].unit)
