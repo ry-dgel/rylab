@@ -68,4 +68,4 @@ def from_fit(result):
         The fit result from lmfit to extract the data from.
     """
     params = result.params
-    return {name : mp.gummy(param.value,param.stderr) for name,param in params}
+    return {name : mp.gummy(param.value,param.stderr) for name,param in params.items()}
