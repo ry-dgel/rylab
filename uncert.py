@@ -56,3 +56,16 @@ def from_gummys(gummys):
     xs = [gummy.x for gummy in gummys]
     weights = [1/gummy.u for gummy in gummys]
     return from_floats(xs, weights, unit=gummys[0].unit)
+
+def from_fit(result):
+    """
+    Converts the results from a fit into a dict of gummys with names
+    taken from the parameters.
+
+    Parameters
+    ----------
+    result : lmfit.ModelResult
+        The fit result from lmfit to extract the data from.
+    """
+    params = result.params
+    return {name : mp.gummy(param.value,param.stderr) for name,param in params}
