@@ -11,6 +11,7 @@ from scipy.optimize import curve_fit
 import lmfit as lm
 
 from . import data as _d
+from . import uncert as _u
 
 # Pretty Plotting
 import os
@@ -155,8 +156,10 @@ def fit_triple(filename,func,mod_freq,ax=None):
     best_vals = result.best_values
     if ax is not None:
         ax.plot(xs, triple_lor(xs,*(best_vals.values())))
-    if chisqr > 2.0:
-        print("Chi-Square from triplet fit is greater than 2!")
+    if chisqr > 1.5:
+        print("Chi-Square from triplet fit is greater than 1.5!")
+        return None
+    vest_vals = _u.from_fit(result)
     lw = best_vals['linewidth'] / best_vals['splitting'] * mod_freq
     print("Linwidth = %.2f MHz (Chisq = %.2f)" % (np.abs(lw),chisqr))
     return np.abs(lw)
@@ -216,9 +219,10 @@ def white_length(filename, plot=False, disp=False, col=10,
     peak_freq = c/(peak_wl * 1E-9)
     fsrs = np.diff(peak_freq[::-1])
     lengths = c/(2*fsrs)
-    #TODO: USE THAT NCR PACKAGE FOR UNCERTAINTIES
-    length = np.mean(lengths) * 1E6 # um
-    fsr = np.mean(fsrs) / 1E6 # MHz
+
+    length = _u.from_list(lengths * 1E6)  # um
+    fsr = _u.from_list(fsrs / 1E6) # MHz
+    
     if plot == True:
         plt.figure()
         plt.plot(wavelength,counts)
