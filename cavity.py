@@ -220,9 +220,9 @@ def white_length(filename, plot=False, disp=False, col=10,
     fsrs = np.diff(peak_freq[::-1])
     lengths = c/(2*fsrs)
 
-    length = _u.from_list(lengths * 1E6)  # um
-    fsr = _u.from_list(fsrs / 1E6) # MHz
-    
+    length = _u.from_floats(lengths * 1E6)  # um
+    fsr = _u.from_floats(fsrs / 1E6) # MHz
+
     if plot == True:
         plt.figure()
         plt.plot(wavelength,counts)
