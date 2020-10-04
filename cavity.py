@@ -159,7 +159,7 @@ def fit_triple(filename,func,mod_freq,ax=None):
     if chisqr > 1.5:
         print("Chi-Square from triplet fit is greater than 1.5!")
         return None
-    vest_vals = _u.from_fit(result)
+    best_vals = _u.from_fit(result)
     lw = best_vals['linewidth'] / best_vals['splitting'] * mod_freq
     print("Linwidth = %.2f MHz (Chisq = %.2f)" % (np.abs(lw),chisqr))
     return np.abs(lw)
