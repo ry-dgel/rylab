@@ -80,13 +80,13 @@ def norm(vals):
 # Parametric Minimization #
 ###########################
 @jit(nopython=True, parallel=True) # We want this to be as fast as possible, so let's JIT it with parallelization
-def min_dist(pair,es,ts):
+def min_dist(pair,es,ts,sigmae,sigmat):
     e = pair[0]
-    t = pair[1]
-    return np.min(np.hypot((e-es),(t-ts)))
+    t = pair[1]/sigmat
+    return np.min(np.hypot((e-es)/sigmae,(t-ts)/sigmat))
 
-def min_dists(pairs, es,ts):
-    func = functools.partial(min_dist, es=es, ts=ts)
+def min_dists(pairs,es,ts,sigmae,sigmat):
+    func = functools.partial(min_dist, es=es, ts=ts,sigmae=sigmae,sigmat=sigmat)
     with Pool(10) as p:
         return np.array(p.map(func, pairs))
 
