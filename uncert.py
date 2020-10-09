@@ -54,7 +54,11 @@ def from_gummys(gummys):
         weighted error with uncertainty given by standard error on mean.
     """
     xs = [gummy.x for gummy in gummys]
-    weights = [1/gummy.u for gummy in gummys]
+    try:
+        weights = [1/gummy.u for gummy in gummys]
+    except ZeroDivisionError:
+        print("Zero uncertainty encountered, weights set to None")
+        weights = None
     return from_floats(xs, weights, unit=gummys[0].unit)
 
 def from_fit(result):
