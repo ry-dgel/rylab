@@ -160,7 +160,9 @@ def fit_triple(filename,func,mod_freq,ax=None):
         print("Chi-Square from triplet fit is greater than 1.5!")
         return None
     best_vals = _u.from_fit(result)
-    lw = best_vals['linewidth'] / best_vals['splitting'] * mod_freq
+    # Splitting is the distance between sidebands, and so total
+    # Frequency difference is twice the modulation frequency.
+    lw = best_vals['linewidth'] / best_vals['splitting'] * (2 * mod_freq)
     print("Linwidth = %.2f MHz (Chisq = %.2f)" % (np.abs(lw),chisqr))
     return np.abs(lw)
 
