@@ -82,7 +82,7 @@ def norm(vals):
 @jit(nopython=True, parallel=True) # We want this to be as fast as possible, so let's JIT it with parallelization
 def min_dist(pair,es,ts,sigmae,sigmat):
     e = pair[0]
-    t = pair[1]/sigmat
+    t = pair[1]
     return np.min(np.hypot((e-es)/sigmae,(t-ts)/sigmat))
 
 def min_dists(pairs,es,ts,sigmae,sigmat):
