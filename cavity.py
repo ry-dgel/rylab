@@ -4,7 +4,7 @@ from numba import jit
 from scipy import constants
 from scipy.signal import find_peaks
 from multiprocessing import Pool
-import matplotlib.pyplot as plt 
+import matplotlib.pyplot as plt
 
 from scipy.optimize import curve_fit
 #TODO: Implement fitting with lmfit
@@ -120,11 +120,11 @@ def triple_lor(x, splitting, amp, center, linewidth, ps, offset):
 ####################
 # Sideband Fitting #
 ####################
-def fit_triple(filename,func,mod_freq,ax=None):
+def fit_triple(filename,func,mod_freq,ax=None, idx_offset=0):
     print("Fitting sideband data in %s" % filename)
     data = _d.read(filename)
     xs = data[0]
-    ys = data[1]
+    ys = data[1+idx_offset]
 
     # Getting main peak
     peak=find_peaks(ys, height=(np.mean(ys)+0.1*np.std(ys)),distance=50000)[0][0]
