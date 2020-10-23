@@ -136,8 +136,9 @@ def rms_time(t, y, dt):
     """
     t_space = np.mean(np.diff(t))
     chunk_size = int(round(dt//t_space))
-    chunked_time = np.resize(t, (chunk_size, t.size//chunk_size))
-    chunked_data = np.resize(y, (chunk_size, y.size//chunk_size))
+    print(chunk_size)
+    chunked_time = np.resize(t, (t.size//chunk_size,chunk_size))
+    chunked_data = np.resize(y, (y.size//chunk_size,chunk_size))
     ts = np.mean(chunked_time,axis=1)
     rms = np.sqrt(np.mean(np.power(chunked_data,2),axis=1))
     return ts, rms
