@@ -22,10 +22,9 @@ double minDist(double x, double y,
                double* pathx, double* pathy,
                double sigmax,double sigmay, 
                int M){
+    double *dists;
+    dists = (double *)malloc(M * sizeof(double));
 
-    double dists[M];
-
-    #pragma omp parallel for
     for(int i = 0; i < M; i++){
         dists[i] = hypot((x - pathx[i])/sigmax, (y - pathy[i])/sigmay);
     }
@@ -36,7 +35,8 @@ double minDist(double x, double y,
             min = dists[i];
         }
     }
-    
+	
+	free(dists);
     return min;
 }
 
@@ -88,7 +88,8 @@ double minLength(double x, double y,
                  double sigmax,double sigmay, 
                  int M){
 
-    double dists[M];
+    double *dists;
+    dists = (double *)malloc(M * sizeof(double));
 
     #pragma omp parallel for
     for(int i = 0; i < M; i++){
@@ -104,6 +105,7 @@ double minLength(double x, double y,
         }
     }
     
+	free(dists);
     return lengths[idx];
 }
 

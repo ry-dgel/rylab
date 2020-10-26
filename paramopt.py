@@ -2,14 +2,16 @@ import ctypes
 import numpy as np
 from numpy.ctypeslib import ndpointer
 import scipy.optimize as opt
-
 import os
 
 dbl_array = ndpointer(ctypes.c_double)
 dbl = ctypes.c_double
 intg = ctypes.c_int
 
-lib = ctypes.CDLL(os.path.join(os.path.dirname(__file__),"minPar.so"))
+if os.name == "nt":
+    lib = ctypes.CDLL(os.path.join(os.path.dirname(__file__),"minPar.dll"))
+else:
+    lib = ctypes.CDLL(os.path.join(os.path.dirname(__file__),"minPar.so"))
 
 lib.minDist.argtypes = [dbl, dbl,             #x, y
                         dbl_array, dbl_array, #Es, Ts
@@ -39,12 +41,12 @@ lib.minLengths.argtypes = [dbl_array, dbl_array, #Xs, Ys
                            intg, intg]           #Len(Xs), #Len(Es)
 lib.minLengths.restype = intg
 
-lib.minLength.argtypes = [dbl, dbl,             #x, y
-                          dbl_array, dbl_array, #Es, Ts
-                          dbl_array,            #Dls
-                          dbl, dbl,             #SigmaX, SigmaY
-                          intg,                 #Len(Es)
-                          dbl, dbl]             #prev, limit    
+lib.minLengthHist.argtypes = [dbl, dbl,             #x, y
+                              dbl_array, dbl_array, #Es, Ts
+                              dbl_array,            #Dls
+                              dbl, dbl,             #SigmaX, SigmaY
+                              intg,                 #Len(Es)
+                              dbl, dbl]             #prev, limit    
 lib.minLengthHist.restype = dbl
 
 lib.minLengthsHist.argtypes = [dbl_array, dbl_array, #Xs, Ys
