@@ -1,5 +1,9 @@
-#ifndef MINPAR_HEADER
-#define MINPAR_HEADER
+#pragma once
+#ifdef _WIN32
+#  define EXPORT __declspec( dllexport )
+#else
+#  define EXPORT
+#endif
 
 /**
  * @brief Compute the minimum distance between a point given by x,y and the path
@@ -15,7 +19,7 @@
  * @param M number of points in the path
  * @return double the minimum distance between point and path
  */
-double minDist(double x, double y, 
+EXPORT double minDist(double x, double y, 
                double* pathx, double* pathy,
                double sigmax,double sigmay, 
                int M);
@@ -34,7 +38,7 @@ double minDist(double x, double y,
  * @param N Number of points
  * @param M Length of path
  */
-int minDists(double* xs, double* ys, 
+EXPORT int minDists(double* xs, double* ys, 
                 double* pathx, double* pathy, double* out,
                 double sigmax,double sigmay, 
                 int N, int M);
@@ -54,7 +58,7 @@ int minDists(double* xs, double* ys,
  * @param M number of points in the path
  * @return double The length that minimizes the distance
  */
-double minLength(double x, double y, 
+EXPORT double minLength(double x, double y, 
                  double* pathx, double* pathy, double* lengths,
                  double sigmax,double sigmay, 
                  int M);
@@ -76,7 +80,7 @@ double minLength(double x, double y,
  * @param N Number of points
  * @param M Length of path
  */
-int minLengths(double* xs, double* ys, 
+EXPORT int minLengths(double* xs, double* ys, 
                    double* pathx, double* pathy, double* lengths, double* out,
                    double sigmax,double sigmay, 
                    int N, int M);
@@ -91,7 +95,7 @@ int minLengths(double* xs, double* ys,
  * @param limit How far to deviate in either direction of prev
  * @param range Output array to put the lower and upper index.
  */
-void getRange(double* lengths, int M, double prev, double limit, int* range);
+EXPORT void getRange(double* lengths, int M, double prev, double limit, int* range);
 
 /**
  * @brief Given a point (x,y), and a path {pathx, pathy} parametrized by lengths,
@@ -111,7 +115,7 @@ void getRange(double* lengths, int M, double prev, double limit, int* range);
  * @param limit radius around prev to look at 
  * @return double The length that minimizes the distance
  */
-double minLengthHist(double x, double y, 
+EXPORT double minLengthHist(double x, double y, 
                  double* pathx, double* pathy, double* lengths,
                  double sigmax,double sigmay, 
                  int M, 
@@ -134,10 +138,8 @@ double minLengthHist(double x, double y,
  * @param M Length of path
  * @param limit radius around each previous length to look at.
  */
-int minLengthsHist(double* x, double* y, 
+EXPORT int minLengthsHist(double* x, double* y, 
                       double* pathx, double* pathy, double* lengths, 
                       double* output,
                       double sigmax,double sigmay, 
                       int N, int M, double limit);
-
-#endif
