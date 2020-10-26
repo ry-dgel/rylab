@@ -155,7 +155,7 @@ def fit_triple(filename,func,mod_freq,ax=None, idx_offset=0):
     chisqr = result.redchi
     best_vals = result.best_values
     if ax is not None:
-        ax.plot(xs, triple_lor(xs,*(best_vals.values())))
+        ax.plot(xs, func(xs,*(best_vals.values())))
     if chisqr > 1.5:
         print("Chi-Square from triplet fit is greater than 1.5!")
         return None

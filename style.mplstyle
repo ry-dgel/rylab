@@ -41,6 +41,6 @@ ytick.minor.size: 1.75
 ytick.right: True
 
 legend.fancybox: True
-legend.handlelength: 0.5
+legend.handlelength: 1.0
 
 hist.bins: auto
