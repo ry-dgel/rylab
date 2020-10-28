@@ -69,7 +69,7 @@ def make_func(pairs, es, ts, sigmae, sigmat):
         output = np.zeros(N)
         lib.minDists(xs, ys, p[0] * es + p[1], p[2] * ts,
                      output, sigmae, sigmat, N, M)
-        return np.sum(output)/len(xs)
+        return np.sum(np.power(output))/len(xs)
 
     return func
 
