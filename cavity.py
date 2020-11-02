@@ -1,4 +1,5 @@
 import functools
+from os import linesep
 import numpy as np
 from numba import jit
 from scipy import constants
@@ -120,7 +121,7 @@ def triple_lor(x, splitting, amp, center, linewidth, ps, offset):
 ####################
 # Sideband Fitting #
 ####################
-def fit_triple(filename, func, mod_freq, ax=None, idx_offset=0, ratio=12):
+def fit_triple(filename, func, mod_freq, ax=None, idx_offset=0, sb_ratio=10, lw_ratio=2):
     print("Fitting sideband data in %s" % filename)
     data = _d.read(filename)
     xs = data[0]
@@ -130,8 +131,10 @@ def fit_triple(filename, func, mod_freq, ax=None, idx_offset=0, ratio=12):
     peak=find_peaks(ys, height=(np.mean(ys)+0.1*np.std(ys)),distance=50000)[0][0]
 
     # Rough guessing side peaks
-    split_left = np.argmin(np.abs(ys[:peak] - np.max(ys[:peak])/ratio))
-    split_right = peak + np.argmin(np.abs(ys[peak:] - np.max(ys[peak:])/ratio))
+    lw_left = np.argmin(np.abs(ys[:peak] - np.max(ys[:peak])/lw_ratio))
+    lw_right = len(xs) - np.argmin(np.abs(np.flip(ys[peak:]) - np.max(ys[peak:])/lw_ratio))
+    split_left = np.argmin(np.abs(ys[:peak] - np.max(ys[:peak])/sb_ratio))
+    split_right = len(xs) - np.argmin(np.abs(np.flip(ys[peak:]) - np.max(ys[peak:])/sb_ratio))
 
     # Guesses
     offset = np.mean(ys)/2
@@ -139,14 +142,15 @@ def fit_triple(filename, func, mod_freq, ax=None, idx_offset=0, ratio=12):
     split = (xs[split_right]-xs[split_left])
     amp = max(ys) - offset
     sigma = min(np.diff(ys))
+    lw = (xs[lw_right] - xs[lw_left])
 
     # Fitting
     model = lm.Model(func)
     params = model.make_params(splitting=split, 
                                amp=amp, 
                                center=center, 
-                               linewidth=0.005, 
-                               ps=0.1, 
+                               linewidth=lw, 
+                               ps=1/sb_ratio, 
                                offset=offset,
                                slope=0.0001)
     
