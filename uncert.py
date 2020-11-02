@@ -53,6 +53,9 @@ def from_gummys(gummys):
     gummy
         weighted error with uncertainty given by standard error on mean.
     """
+    if not len(gummys):
+        raise ValueError("Empty List Provided")
+    
     xs = [gummy.x for gummy in gummys]
     try:
         weights = [1/gummy.u for gummy in gummys]

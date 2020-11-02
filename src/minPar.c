@@ -24,7 +24,8 @@ double minDist(double x, double y,
                int M){
     double *dists;
     dists = (double *)malloc(M * sizeof(double));
-
+    
+    #pragma omp parallel for
     for(int i = 0; i < M; i++){
         dists[i] = hypot((x - pathx[i])/sigmax, (y - pathy[i])/sigmay);
     }

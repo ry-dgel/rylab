@@ -120,7 +120,7 @@ def triple_lor(x, splitting, amp, center, linewidth, ps, offset):
 ####################
 # Sideband Fitting #
 ####################
-def fit_triple(filename,func,mod_freq,ax=None, idx_offset=0):
+def fit_triple(filename, func, mod_freq, ax=None, idx_offset=0, ratio=12):
     print("Fitting sideband data in %s" % filename)
     data = _d.read(filename)
     xs = data[0]
@@ -130,8 +130,8 @@ def fit_triple(filename,func,mod_freq,ax=None, idx_offset=0):
     peak=find_peaks(ys, height=(np.mean(ys)+0.1*np.std(ys)),distance=50000)[0][0]
 
     # Rough guessing side peaks
-    split_left = np.argmin(np.abs(ys[:peak] - np.max(ys[:peak])/3))
-    split_right = np.argmin(np.abs(ys[peak:] - np.max(ys[peak:])/3))
+    split_left = np.argmin(np.abs(ys[:peak] - np.max(ys[:peak])/ratio))
+    split_right = peak + np.argmin(np.abs(ys[peak:] - np.max(ys[peak:])/ratio))
 
     # Guesses
     offset = np.mean(ys)/2
@@ -145,7 +145,7 @@ def fit_triple(filename,func,mod_freq,ax=None, idx_offset=0):
     params = model.make_params(splitting=split, 
                                amp=amp, 
                                center=center, 
-                               linewidth=0.0001, 
+                               linewidth=0.005, 
                                ps=0.1, 
                                offset=offset,
                                slope=0.0001)
