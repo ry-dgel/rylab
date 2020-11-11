@@ -110,7 +110,7 @@ def read_sp_bin(file):
     return sp.data.load(file)
 
 # Get data from csv file exported from lock in.
-def unpack(filename, fields = []):
+def unpack(filename, fields = [], delim=None):
     chunks = {}
     with open(filename) as f:
         # Skip header line
@@ -118,7 +118,8 @@ def unpack(filename, fields = []):
         for line in f:
             # Each line has form:
             # chunk;timestamp;size;fieldname;data0;data1;...;dataN
-            delim = get_delim(filename)
+            if delim is None:
+                delim = get_delim(filename)
             entries = line.split(delim)
 
             chunk = entries[0]

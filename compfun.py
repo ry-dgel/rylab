@@ -112,10 +112,10 @@ def merge(cm1, cm2):
 def load(filename, polar=True):
     if polar:
         return [CompFun.from_polar(chunk) for chunk in
-                data.unpack(filename, fields=['r','phase','frequency'])]
+                data.unpack(filename, fields=['r','phase','frequency'],delim=',')]
     else:
         return [CompFun.from_cart(chunk) for chunk in
-                data.unpack(filename, fields=['x','y','frequency'])]
+                data.unpack(filename, fields=['x','y','frequency'],delim=',')]
 
 ##############################
 # Analytic Complex Functions #
