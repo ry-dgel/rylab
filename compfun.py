@@ -250,8 +250,8 @@ def plot_phase(ax, phase, freq, unwrap=False, lines=False):
     ax.set_yticks([-180,-90,0,90,180])
     ax.set_xlabel("Frequency (Hz)")
 
-def plot_funcs(funcs, freq=np.array([]), labels=[], unwrap=False, lines=False):
-    total, axes = plt.subplots(2,1,sharex=True,squeeze=True)
+def plot_funcs(funcs, freq=np.array([]), labels=[], unwrap=False, lines=False, **kwargs):
+    total, axes = plt.subplots(2,1,sharex=True,squeeze=True,**kwargs)
     for index, func in enumerate(funcs):
         if isinstance(func, AnCompFun):
             if freq.size == 0:
